@@ -1,16 +1,7 @@
 *.iml
 .gradle
 /local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/markdown-navigator.xml
-/.idea/markdown-navigator-enh.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-/.idea/git_toolbox_prj.xml
-/.idea/dbnavigator.xml
+/.idea
 .DS_Store
 /build
 /captures
