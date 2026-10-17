@@ -20,7 +20,8 @@ class PostsLayoutPreferencesDialogFragment(
     private val onApplyListener: OnApplyListener
 ) : DialogFragment() {
 
-    private lateinit var binding: DialogPostLayoutPreferencesBinding
+    private var _binding: DialogPostLayoutPreferencesBinding? = null
+    private val binding get() = _binding!!
 
     private val preferencesBuilder: PostsLayoutPreferences.Builder
 
@@ -30,7 +31,7 @@ class PostsLayoutPreferencesDialogFragment(
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        binding = DialogPostLayoutPreferencesBinding.inflate(layoutInflater)
+        _binding = DialogPostLayoutPreferencesBinding.inflate(layoutInflater)
         init()
         return MaterialAlertDialogBuilder(requireContext())
             .setView(binding.getRoot())
@@ -41,6 +42,11 @@ class PostsLayoutPreferencesDialogFragment(
                 onApplyListener.onApply(preferences)
             }
             .create()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun init() {
