@@ -282,7 +282,7 @@ class DownloadWorker(context: Context, workerParams: WorkerParameters) : Corouti
                 context,
                 DOWNLOAD_NOTIFICATION_INTENT_REQUEST_CODE,
                 intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_ONE_SHOT
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
             )
             val notificationId: Int = notificationId + count
             notificationIds.add(notificationId)

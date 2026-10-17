@@ -64,7 +64,7 @@ public class DMSyncAlarmReceiver extends BroadcastReceiver {
         return PendingIntent.getBroadcast(applicationContext,
                                           Constants.DM_SYNC_SERVICE_REQUEST_CODE,
                                           intent,
-                                          PendingIntent.FLAG_UPDATE_CURRENT);
+                                          PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 
     private static long getIntervalMillis() {

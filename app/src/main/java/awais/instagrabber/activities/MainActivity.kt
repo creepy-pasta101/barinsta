@@ -1,11 +1,13 @@
 package awais.instagrabber.activities
 
+import android.Manifest
 import android.animation.LayoutTransition
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.os.*
 import android.provider.DocumentsContract.EXTRA_INITIAL_URI
 import android.text.Editable
@@ -16,7 +18,9 @@ import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.core.provider.FontRequest
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
@@ -124,6 +128,7 @@ class MainActivity : BaseLanguageActivity() {
         setSupportActionBar(binding.toolbar)
         setupInsetsCallback()
         createNotificationChannels()
+        requestNotificationPermissionIfNeeded()
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.main_nav_host) as NavHostFragment
         navController = navHostFragment.navController
         if (savedInstanceState == null) {
@@ -331,6 +336,19 @@ class MainActivity : BaseLanguageActivity() {
         )
         silentNotificationChannel.setSound(null, null)
         notificationManager.createNotificationChannel(silentNotificationChannel)
+    }
+
+    // From Android 13 (API 33) notifications require a runtime permission grant.
+    private fun requestNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+            PackageManager.PERMISSION_GRANTED
+        ) return
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+            REQUEST_CODE_POST_NOTIFICATIONS
+        )
     }
 
     private fun setupNavigation(setDefaultTabFromSettings: Boolean) {
@@ -695,6 +713,8 @@ class MainActivity : BaseLanguageActivity() {
     }
 
     companion object {
+        private const val REQUEST_CODE_POST_NOTIFICATIONS = 8033
+
         private const val TAG = "MainActivity"
         private const val LAST_SELECT_NAV_MENU_ID = "lastSelectedNavMenuId"
 

@@ -1,14 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="awais.instagrabber">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Legacy storage: only meaningful up to Android 12L (API 32). -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28"
+        tools:ignore="ScopedStorage" />
+    <!-- Android 13+ (API 33) granular media permissions. -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+
+    <!-- Notifications: required at runtime from Android 13 (API 33). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Foreground service for the DM sync worker (Android 14 / API 34 types). -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <!--<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />-->
 
     <uses-feature
         android:name="android.hardware.camera.any"
@@ -18,6 +35,7 @@
         android:name=".InstaGrabberApplication"
         android:allowBackup="true"
         android:backupAgent=".backup.BarinstaBackupAgent"
+        android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_descriptor"
         android:fullBackupOnly="true"
         android:icon="@mipmap/ic_launcher"
@@ -27,6 +45,7 @@
         tools:ignore="UnusedAttribute">
         <activity
             android:name=".activities.MainActivity"
+            android:exported="true"
             android:launchMode="singleTop"
             android:taskAffinity=".Main">
             <intent-filter>
@@ -71,6 +90,7 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:documentLaunchMode="never"
             android:excludeFromRecents="true"
+            android:exported="false"
             android:finishOnTaskLaunch="true"
             android:launchMode="singleTask"
             android:lockTaskMode="never"
@@ -80,6 +100,7 @@
             android:theme="@android:style/Theme.DeviceDefault.Dialog" />
         <activity
             android:name=".activities.Login"
+            android:exported="false"
             android:label="@string/login"
             android:parentActivityName=".activities.MainActivity"
             android:theme="@style/AppTheme.Light.White">
@@ -89,6 +110,7 @@
         </activity>
         <activity
             android:name=".activities.CameraActivity"
+            android:exported="false"
             android:label="Camera"
             android:parentActivityName=".activities.MainActivity"
             android:theme="@style/AppTheme.Light.White">
@@ -98,8 +120,11 @@
         </activity>
         <activity
             android:name=".utils.ProcessPhoenix"
+            android:exported="false"
             android:theme="@style/Theme.AppCompat.Translucent" />
-        <activity android:name=".activities.DirectorySelectActivity" />
+        <activity
+            android:name=".activities.DirectorySelectActivity"
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -119,7 +144,8 @@
             android:exported="false" />
         <service
             android:name=".services.DMSyncService"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
 
         <receiver
             android:name=".services.DMSyncAlarmReceiver"

@@ -68,6 +68,6 @@ public class DeleteImageIntentService extends IntentService {
         intent.setAction(Intent.ACTION_DELETE);
         intent.putExtra(EXTRA_IMAGE_PATH, imagePath.getUri().toString());
         intent.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
-        return PendingIntent.getService(context, random.nextInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getService(context, random.nextInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 }

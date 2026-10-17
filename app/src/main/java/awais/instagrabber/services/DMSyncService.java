@@ -6,11 +6,14 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.content.pm.ServiceInfo;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.ServiceCompat;
 import androidx.lifecycle.LifecycleService;
 
 import com.google.common.collect.ImmutableList;
@@ -59,7 +62,12 @@ public class DMSyncService extends LifecycleService {
     @Override
     public void onCreate() {
         super.onCreate();
-        startForeground(Constants.DM_CHECK_NOTIFICATION_ID, buildForegroundNotification());
+        ServiceCompat.startForeground(
+                this,
+                Constants.DM_CHECK_NOTIFICATION_ID,
+                buildForegroundNotification(),
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ? ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC : 0
+        );
         Log.d(TAG, "onCreate: Service created");
         final DirectMessagesManager directMessagesManager = DirectMessagesManager.INSTANCE;
         inboxManager = directMessagesManager.getInboxManager();
@@ -207,7 +215,7 @@ public class DMSyncService extends LifecycleService {
                 .putExtra(Constants.DM_THREAD_ACTION_EXTRA_THREAD_ID, threadId)
                 .putExtra(Constants.DM_THREAD_ACTION_EXTRA_THREAD_TITLE, threadTitle)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        return PendingIntent.getActivity(getApplicationContext(), Constants.SHOW_DM_THREAD, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getActivity(getApplicationContext(), Constants.SHOW_DM_THREAD, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 
     @Override
