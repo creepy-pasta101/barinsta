@@ -549,6 +549,8 @@ public class DirectMessageThreadFragment extends Fragment implements DirectReact
     public void onDestroyView() {
         super.onDestroyView();
         cleanup();
+        // A MenuItem holds the menu, which holds the toolbar's ActionMenuView — this fragment's view.
+        markAsSeenMenuItem = null;
     }
 
     @Override
