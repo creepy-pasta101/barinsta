@@ -68,7 +68,6 @@ import java.util.*
 class StoryViewerFragment : Fragment() {
     private val TAG = "StoryViewerFragment"
 
-    private var root: View? = null
     private var currentStoryUsername: String? = null
     private var storiesAdapter: StoriesAdapter? = null
     private var swipeEvent: SwipeEvent? = null
@@ -79,7 +78,6 @@ class StoryViewerFragment : Fragment() {
     private var profileVisible: Boolean = false
     private var player: SimpleExoPlayer? = null
 
-    private var shouldRefresh = true
     private var currentFeedStoryIndex = 0
     private var sliderValue = 0.0
     private var options: StoryViewerOptions? = null
@@ -87,7 +85,8 @@ class StoryViewerFragment : Fragment() {
     private var backStackSavedStateResultLiveData: MutableLiveData<Any?>? = null
     private lateinit var fragmentActivity: AppCompatActivity
     private lateinit var storiesViewModel: StoryFragmentViewModel
-    private lateinit var binding: FragmentStoryViewerBinding
+    private var _binding: FragmentStoryViewerBinding? = null
+    private val binding get() = _binding!!
 
     @Suppress("UNCHECKED_CAST")
     private val backStackSavedStateObserver = Observer<Any?> { result ->
@@ -122,20 +121,20 @@ class StoryViewerFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        if (root != null) {
-            shouldRefresh = false
-            return root
-        }
-        binding = FragmentStoryViewerBinding.inflate(inflater, container, false)
-        root = binding.root
-        return root
+    ): View {
+        _binding = FragmentStoryViewerBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        if (!shouldRefresh) return
         init()
-        shouldRefresh = false
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        releasePlayer()
+        binding.imageViewer.controller = null
+        _binding = null
     }
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -211,7 +210,7 @@ class StoryViewerFragment : Fragment() {
             storiesViewModel.setMedia(position)
         }
         binding.storiesList.adapter = storiesAdapter
-        storiesViewModel.getCurrentStory().observe(fragmentActivity, {
+        storiesViewModel.getCurrentStory().observe(viewLifecycleOwner, {
             if (it?.items != null && it.items.size > 1) {
                 val storyMedias = it.items.toMutableList()
                 val newItem = storyMedias.get(0)
@@ -229,19 +228,19 @@ class StoryViewerFragment : Fragment() {
                 binding.storiesList.visibility = View.GONE
             }
         })
-        storiesViewModel.getDate().observe(fragmentActivity, {
+        storiesViewModel.getDate().observe(viewLifecycleOwner, {
             val actionBar = fragmentActivity.supportActionBar
             if (actionBar != null && it != null) actionBar.subtitle = it
         })
-        storiesViewModel.getTitle().observe(fragmentActivity, {
+        storiesViewModel.getTitle().observe(viewLifecycleOwner, {
             val actionBar = fragmentActivity.supportActionBar
             if (actionBar != null && it != null) actionBar.title = it
         })
-        storiesViewModel.getCurrentMedia().observe(fragmentActivity, { refreshStory(it) })
-        storiesViewModel.getCurrentIndex().observe(fragmentActivity, {
+        storiesViewModel.getCurrentMedia().observe(viewLifecycleOwner, { refreshStory(it) })
+        storiesViewModel.getCurrentIndex().observe(viewLifecycleOwner, {
             storiesAdapter!!.paginate(it)
         })
-        storiesViewModel.getOptions().observe(fragmentActivity, {
+        storiesViewModel.getOptions().observe(viewLifecycleOwner, {
             binding.stickers.isEnabled = it.first.size > 0
         })
     }
@@ -272,7 +271,7 @@ class StoryViewerFragment : Fragment() {
             when (type) {
                 StoryViewerOptions.Type.HIGHLIGHT -> {
                     storiesViewModel.fetchHighlights(options!!.id)
-                    storiesViewModel.highlights.observe(fragmentActivity) {
+                    storiesViewModel.highlights.observe(viewLifecycleOwner) {
                         setupMultipage(it)
                     }
                 }
@@ -325,7 +324,7 @@ class StoryViewerFragment : Fragment() {
 
     private fun setupMultipage(models: List<Story>?) {
         if (models == null) return
-        storiesViewModel.getPagination().observe(fragmentActivity, {
+        storiesViewModel.getPagination().observe(viewLifecycleOwner, {
             when (it) {
                 StoryPaginationType.FORWARD -> {
                     if (currentFeedStoryIndex == models.size - 1)
