@@ -22,7 +22,7 @@ android {
     defaultConfig {
         applicationId 'me.austinhuang.instagrabber'
 
-        minSdk 21
+        minSdk 24
         targetSdk 36
 
         versionCode 65

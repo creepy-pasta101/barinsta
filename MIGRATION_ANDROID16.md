@@ -19,13 +19,14 @@ still needs attention.
 | Kotlin         | 1.5.21 | **2.2.10** |
 | `compileSdk`   | 30     | **36** |
 | `targetSdk`    | 30     | **36** |
-| `minSdk`       | 21     | **21** (unchanged) |
+| `minSdk`       | 21     | **24** |
 | Java source/target | 1.8 | **17** |
 | JDK to build   | 8      | **17** |
 
-`minSdk` stays at 21. Note that Android 15+ devices will not install an app whose
-*target* is below 24; that is a `targetSdk` concern, not `minSdk`, and `targetSdk`
-is now 36.
+`minSdk` was raised from 21 to **24** (Android 7.0). This is required by
+`androidx.room:room-runtime:2.8.5`, which declares a minimum SDK of 23. Android 15+
+devices will not install an app whose *target* is below 24, so `minSdk 24` aligns
+the floor with the platform's own expectation.
 
 ---
 
