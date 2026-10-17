@@ -16,7 +16,7 @@ still needs attention.
 |----------------|--------|-------|
 | Gradle         | 7.1.1  | **8.11.1** |
 | Android Gradle Plugin | 4.2.2 | **8.9.1** |
-| Kotlin         | 1.5.21 | **1.9.24** |
+| Kotlin         | 1.5.21 | **2.2.10** |
 | `compileSdk`   | 30     | **36** |
 | `targetSdk`    | 30     | **36** |
 | `minSdk`       | 21     | **21** (unchanged) |
@@ -71,8 +71,8 @@ versions:
 | androidx.core | 1.6.0 | 1.13.1 (core-ktx) |
 | fragment-ktx | 1.3.6 | 1.8.5 |
 | lifecycle | 2.3.1 | 2.8.7 |
-| navigation | 2.4.0-alpha05 | 2.7.7 |
-| Room | 2.3.0 | 2.6.1 |
+| navigation | 2.4.0-alpha05 | 2.9.5 |
+| Room | 2.3.0 | 2.8.5 |
 | CameraX | 1.1.0-alpha07 | 1.3.4 |
 | WorkManager | 2.5.0 | 2.9.1 |
 | ExoPlayer | 2.14.2 | 2.19.1 |
