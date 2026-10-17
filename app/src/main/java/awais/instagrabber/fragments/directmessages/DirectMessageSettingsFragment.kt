@@ -40,7 +40,8 @@ import java.util.*
 
 class DirectMessageSettingsFragment : Fragment(), ConfirmDialogFragmentCallback {
     private lateinit var viewModel: DirectSettingsViewModel
-    private lateinit var binding: FragmentDirectMessagesSettingsBinding
+    private var _binding: FragmentDirectMessagesSettingsBinding? = null
+    private val binding get() = _binding!!
 
     private var usersAdapter: DirectUsersAdapter? = null
     private var isPendingRequestsSetupDone = false
@@ -68,7 +69,7 @@ class DirectMessageSettingsFragment : Fragment(), ConfirmDialogFragmentCallback 
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentDirectMessagesSettingsBinding.inflate(inflater, container, false)
+        _binding = FragmentDirectMessagesSettingsBinding.inflate(inflater, container, false)
         // currentlyRunning = new DirectMessageInboxThreadFetcher(threadId, null, null, fetchListener).execute();
         return binding.root
     }
@@ -80,6 +81,7 @@ class DirectMessageSettingsFragment : Fragment(), ConfirmDialogFragmentCallback 
 
     override fun onDestroyView() {
         super.onDestroyView()
+        _binding = null
         isPendingRequestsSetupDone = false
     }
 
