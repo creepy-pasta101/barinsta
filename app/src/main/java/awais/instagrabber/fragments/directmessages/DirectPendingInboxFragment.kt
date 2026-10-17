@@ -25,13 +25,12 @@ import com.google.android.material.snackbar.Snackbar
 class DirectPendingInboxFragment : Fragment(), OnRefreshListener {
     private val viewModel: DirectPendingInboxViewModel by activityViewModels()
 
-    private lateinit var root: CoordinatorLayout
     private lateinit var lazyLoader: RecyclerLazyLoaderAtEdge
-    private lateinit var binding: FragmentDirectPendingInboxBinding
+    private var _binding: FragmentDirectPendingInboxBinding? = null
+    private val binding get() = _binding!!
     private lateinit var fragmentActivity: MainActivity
     private lateinit var inboxAdapter: DirectMessageInboxAdapter
 
-    private var shouldRefresh = true
     private var scrollToTop = false
     private var navigating = false
     private var threadsObserver: Observer<List<DirectThread?>>? = null
@@ -46,17 +45,11 @@ class DirectPendingInboxFragment : Fragment(), OnRefreshListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        if (this::root.isInitialized) {
-            shouldRefresh = false
-            return root
-        }
-        binding = FragmentDirectPendingInboxBinding.inflate(inflater, container, false)
-        root = binding.root
-        return root
+        _binding = FragmentDirectPendingInboxBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        if (!shouldRefresh) return
         init()
     }
 
@@ -74,6 +67,11 @@ class DirectPendingInboxFragment : Fragment(), OnRefreshListener {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         init()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onDestroy() {
@@ -100,7 +98,7 @@ class DirectPendingInboxFragment : Fragment(), OnRefreshListener {
                 binding.empty.visibility = View.VISIBLE
             }
         }
-        threadsObserver?.let { viewModel.threads.observe(fragmentActivity, it) }
+        threadsObserver?.let { viewModel.threads.observe(viewLifecycleOwner, it) }
         viewModel.inbox.observe(viewLifecycleOwner, { inboxResource: Resource<DirectInbox?>? ->
             if (inboxResource == null) return@observe
             when (inboxResource.status) {
