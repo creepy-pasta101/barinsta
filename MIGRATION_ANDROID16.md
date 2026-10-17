@@ -79,7 +79,7 @@ versions:
 | RecyclerView | 1.2.1 | 1.3.2 |
 | ConstraintLayout | 2.0.4 | 2.2.0 |
 | Guava | 27.0.1-android | 33.3.1-android |
-| Fresco | 2.5.0 | 3.2.0 |
+| Fresco | 2.5.0 | 3.9.0 |
 | Retrofit | 2.9.0 | 2.11.0 |
 | LeakCanary | 2.7 | 2.14 |
 | Sentry (github flavor) | 5.0.1 | 7.14.0 |
