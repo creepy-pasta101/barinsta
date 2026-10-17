@@ -6,8 +6,8 @@ import android.util.Log
 import androidx.core.util.Pair
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations.distinctUntilChanged
-import androidx.lifecycle.Transformations.map
+import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.map
 import awais.instagrabber.R
 import awais.instagrabber.customviews.emoji.Emoji
 import awais.instagrabber.models.Resource
@@ -66,7 +66,7 @@ class ThreadManager(
     private val directMessagesRepository by lazy { DirectMessagesRepository.getInstance() }
 
     val thread: LiveData<DirectThread?> by lazy {
-        distinctUntilChanged(map(inboxManager.getInbox()) { inboxResource: Resource<DirectInbox?>? ->
+        inboxManager.getInbox().map { inboxResource: Resource<DirectInbox?>? ->
             if (inboxResource == null) return@map null
             val (threads) = inboxResource.data ?: return@map null
             if (threads.isNullOrEmpty()) return@map null
@@ -75,36 +75,36 @@ class ThreadManager(
                 cursor = thread.oldestCursor
                 hasOlder = thread.hasOlder
             }
-        })
+        }.distinctUntilChanged()
     }
-    val inputMode: LiveData<Int> by lazy { distinctUntilChanged(map(thread) { it?.inputMode ?: 1 }) }
-    val threadTitle: LiveData<String?> by lazy { distinctUntilChanged(map(thread) { it?.threadTitle }) }
-    val users: LiveData<List<User>> by lazy { distinctUntilChanged(map(thread) { it?.users ?: emptyList() }) }
+    val inputMode: LiveData<Int> by lazy { thread.map { it?.inputMode ?: 1 }.distinctUntilChanged() }
+    val threadTitle: LiveData<String?> by lazy { thread.map { it?.threadTitle }.distinctUntilChanged() }
+    val users: LiveData<List<User>> by lazy { thread.map { it?.users ?: emptyList() }.distinctUntilChanged() }
     val usersWithCurrent: LiveData<List<User>> by lazy {
-        distinctUntilChanged(map(thread) {
+        thread.map {
             if (it == null) return@map emptyList()
             getUsersWithCurrentUser(it)
-        })
+        }.distinctUntilChanged()
     }
-    val leftUsers: LiveData<List<User>> by lazy { distinctUntilChanged(map(thread) { it?.leftUsers ?: emptyList() }) }
+    val leftUsers: LiveData<List<User>> by lazy { thread.map { it?.leftUsers ?: emptyList() }.distinctUntilChanged() }
     val usersAndLeftUsers: LiveData<Pair<List<User>, List<User>>> by lazy {
-        distinctUntilChanged(map(thread) {
+        thread.map {
             if (it == null) return@map Pair<List<User>, List<User>>(emptyList(), emptyList())
             val users = getUsersWithCurrentUser(it)
             val leftUsers = it.leftUsers
             Pair(users, leftUsers)
-        })
+        }.distinctUntilChanged()
     }
-    val isPending: LiveData<Boolean> by lazy { distinctUntilChanged(map(thread) { it?.pending ?: true }) }
-    val adminUserIds: LiveData<List<Long>> by lazy { distinctUntilChanged(map(thread) { it?.adminUserIds ?: emptyList() }) }
-    val items: LiveData<List<DirectItem>> by lazy { distinctUntilChanged(map(thread) { it?.items ?: emptyList() }) }
-    val isViewerAdmin: LiveData<Boolean> by lazy { distinctUntilChanged(map(thread) { it?.adminUserIds?.contains(viewerId) ?: false }) }
-    val isGroup: LiveData<Boolean> by lazy { distinctUntilChanged(map(thread) { it?.isGroup ?: false }) }
-    val isMuted: LiveData<Boolean> by lazy { distinctUntilChanged(map(thread) { it?.muted ?: false }) }
-    val isApprovalRequiredToJoin: LiveData<Boolean> by lazy { distinctUntilChanged(map(thread) { it?.approvalRequiredForNewMembers ?: false }) }
-    val isMentionsMuted: LiveData<Boolean> by lazy { distinctUntilChanged(map(thread) { it?.mentionsMuted ?: false }) }
-    val pendingRequestsCount: LiveData<Int> by lazy { distinctUntilChanged(map(_pendingRequests) { it?.totalParticipantRequests ?: 0 }) }
-    val inviter: LiveData<User?> by lazy { distinctUntilChanged(map(thread) { it?.inviter }) }
+    val isPending: LiveData<Boolean> by lazy { thread.map { it?.pending ?: true }.distinctUntilChanged() }
+    val adminUserIds: LiveData<List<Long>> by lazy { thread.map { it?.adminUserIds ?: emptyList() }.distinctUntilChanged() }
+    val items: LiveData<List<DirectItem>> by lazy { thread.map { it?.items ?: emptyList() }.distinctUntilChanged() }
+    val isViewerAdmin: LiveData<Boolean> by lazy { thread.map { it?.adminUserIds?.contains(viewerId) ?: false }.distinctUntilChanged() }
+    val isGroup: LiveData<Boolean> by lazy { thread.map { it?.isGroup ?: false }.distinctUntilChanged() }
+    val isMuted: LiveData<Boolean> by lazy { thread.map { it?.muted ?: false }.distinctUntilChanged() }
+    val isApprovalRequiredToJoin: LiveData<Boolean> by lazy { thread.map { it?.approvalRequiredForNewMembers ?: false }.distinctUntilChanged() }
+    val isMentionsMuted: LiveData<Boolean> by lazy { thread.map { it?.mentionsMuted ?: false }.distinctUntilChanged() }
+    val pendingRequestsCount: LiveData<Int> by lazy { _pendingRequests.map { it?.totalParticipantRequests ?: 0 }.distinctUntilChanged() }
+    val inviter: LiveData<User?> by lazy { thread.map { it?.inviter }.distinctUntilChanged() }
 
     private var hasOlder = true
     private var cursor: String? = null

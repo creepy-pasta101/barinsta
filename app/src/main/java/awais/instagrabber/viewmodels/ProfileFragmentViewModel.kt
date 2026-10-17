@@ -522,73 +522,73 @@ class ProfileFragmentViewModel(
     /**
      * Username of profile without '`@`'
      */
-    val username: LiveData<String> = Transformations.map(profile) {
+    val username: LiveData<String> = profile.map {
         return@map when (it.status) {
             Resource.Status.ERROR -> ""
             Resource.Status.LOADING, Resource.Status.SUCCESS -> it.data?.username ?: ""
         }
     }
-    val profilePicUrl: LiveData<String?> = Transformations.map(profile) {
+    val profilePicUrl: LiveData<String?> = profile.map {
         return@map when (it.status) {
             Resource.Status.ERROR -> null
             Resource.Status.LOADING, Resource.Status.SUCCESS -> it.data?.profilePicUrl
         }
     }
-    val fullName: LiveData<String?> = Transformations.map(profile) {
+    val fullName: LiveData<String?> = profile.map {
         return@map when (it.status) {
             Resource.Status.ERROR -> ""
             Resource.Status.LOADING, Resource.Status.SUCCESS -> it.data?.fullName
         }
     }
-    val biography: LiveData<String?> = Transformations.map(profile) {
+    val biography: LiveData<String?> = profile.map {
         return@map when (it.status) {
             Resource.Status.ERROR -> ""
             Resource.Status.LOADING, Resource.Status.SUCCESS -> it.data?.biography
         }
     }
-    val url: LiveData<String?> = Transformations.map(profile) {
+    val url: LiveData<String?> = profile.map {
         return@map when (it.status) {
             Resource.Status.ERROR -> ""
             Resource.Status.LOADING, Resource.Status.SUCCESS -> it.data?.externalUrl
         }
     }
-    val followersCount: LiveData<Long?> = Transformations.map(profile) {
+    val followersCount: LiveData<Long?> = profile.map {
         return@map when (it.status) {
             Resource.Status.ERROR -> null
             Resource.Status.LOADING, Resource.Status.SUCCESS -> it.data?.followerCount
         }
     }
-    val followingCount: LiveData<Long?> = Transformations.map(profile) {
+    val followingCount: LiveData<Long?> = profile.map {
         return@map when (it.status) {
             Resource.Status.ERROR -> null
             Resource.Status.LOADING, Resource.Status.SUCCESS -> it.data?.followingCount
         }
     }
-    val postCount: LiveData<Long?> = Transformations.map(profile) {
+    val postCount: LiveData<Long?> = profile.map {
         return@map when (it.status) {
             Resource.Status.ERROR -> null
             Resource.Status.LOADING, Resource.Status.SUCCESS -> it.data?.mediaCount
         }
     }
-    val isPrivate: LiveData<Boolean?> = Transformations.map(profile) {
+    val isPrivate: LiveData<Boolean?> = profile.map {
         return@map when (it.status) {
             Resource.Status.ERROR -> null
             Resource.Status.LOADING, Resource.Status.SUCCESS -> it.data?.isPrivate
         }
     }
-    val isVerified: LiveData<Boolean?> = Transformations.map(profile) {
+    val isVerified: LiveData<Boolean?> = profile.map {
         return@map when (it.status) {
             Resource.Status.ERROR -> null
             Resource.Status.LOADING, Resource.Status.SUCCESS -> it.data?.isVerified
         }
     }
-    val friendshipStatus: LiveData<FriendshipStatus?> = Transformations.map(profile) {
+    val friendshipStatus: LiveData<FriendshipStatus?> = profile.map {
         return@map when (it.status) {
             Resource.Status.ERROR -> null
             Resource.Status.LOADING, Resource.Status.SUCCESS -> it.data?.friendshipStatus
         }
     }
-    val profileContext: LiveData<Pair<String?, List<UserProfileContextLink>?>> = Transformations.map(profile) {
+    val profileContext: LiveData<Pair<String?, List<UserProfileContextLink>?>> = profile.map {
         return@map when (it.status) {
             Resource.Status.ERROR -> null to null
             Resource.Status.LOADING, Resource.Status.SUCCESS -> it.data?.profileContext to it.data?.profileContextLinksWithUserIds

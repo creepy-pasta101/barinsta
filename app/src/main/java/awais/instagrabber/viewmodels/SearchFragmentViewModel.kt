@@ -4,7 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import awais.instagrabber.db.datasources.RecentSearchDataSource
 import awais.instagrabber.db.entities.Favorite
@@ -57,7 +57,7 @@ class SearchFragmentViewModel(application: Application) : AppStateViewModel(appl
     private val searchDebouncer = Debouncer(searchCallback, 500)
     private val cookie = Utils.settingsHelper.getString(Constants.COOKIE)
     private val isLoggedIn = !isEmpty(cookie) && getUserIdFromCookie(cookie) != 0L
-    private val distinctQuery = Transformations.distinctUntilChanged(query)
+    private val distinctQuery = query.distinctUntilChanged()
     private val recentSearchRepository: RecentSearchRepository by lazy {
         RecentSearchRepository.getInstance(RecentSearchDataSource.getInstance(application))
     }

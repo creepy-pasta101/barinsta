@@ -3,7 +3,8 @@ package awais.instagrabber.managers
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.map
 import awais.instagrabber.R
 import awais.instagrabber.models.Resource
 import awais.instagrabber.models.Resource.Companion.error
@@ -39,15 +40,15 @@ class InboxManager(private val pending: Boolean) {
         private set
 
     fun getInbox(): LiveData<Resource<DirectInbox?>> {
-        return Transformations.distinctUntilChanged(inbox)
+        return inbox.distinctUntilChanged()
     }
 
     fun getUnseenCount(): LiveData<Resource<Int?>> {
-        return Transformations.distinctUntilChanged(unseenCount)
+        return unseenCount.distinctUntilChanged()
     }
 
     fun getPendingRequestsTotal(): LiveData<Int> {
-        return Transformations.distinctUntilChanged(pendingRequestsTotal)
+        return pendingRequestsTotal.distinctUntilChanged()
     }
 
     fun fetchInbox(scope: CoroutineScope) {
@@ -310,13 +311,13 @@ class InboxManager(private val pending: Boolean) {
         require(!csrfToken.isNullOrBlank() && viewerId != 0L && deviceUuid.isNotBlank()) { "User is not logged in!" }
 
         // Transformations
-        threads = Transformations.distinctUntilChanged(Transformations.map(inbox) { inboxResource: Resource<DirectInbox?> ->
+        threads = inbox.map { inboxResource: Resource<DirectInbox?> ->
             // if (inboxResource == null) {
             //     return@map emptyList()
             // }
             val inbox = inboxResource.data
             val threads = inbox?.threads ?: emptyList()
             ImmutableList.sortedCopyOf(THREAD_COMPARATOR, threads)
-        })
+        }.distinctUntilChanged()
     }
 }

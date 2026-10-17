@@ -42,7 +42,7 @@ class DirectThreadViewModel(
     val threadTitle: LiveData<String?> by lazy { threadManager.threadTitle }
     val thread: LiveData<DirectThread?> by lazy { threadManager.thread }
     val items: LiveData<List<DirectItem>> by lazy {
-        Transformations.map(threadManager.items) { it.filter { thread -> thread.hideInThread == 0 } }
+        threadManager.items.map { it.filter { thread -> thread.hideInThread == 0 } }
     }
     val isFetching: LiveData<Resource<Any?>> by lazy { threadManager.fetching }
     val users: LiveData<List<User>> by lazy { threadManager.users }
