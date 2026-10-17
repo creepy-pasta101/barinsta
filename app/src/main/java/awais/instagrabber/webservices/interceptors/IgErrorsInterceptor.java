@@ -95,8 +95,11 @@ public class IgErrorsInterceptor implements Interceptor {
                     case "execution failure":
                         showSnackbar(message);
                         return;
+                    case "checkpoint_required":
+                    case "challenge_required":
+                        showErrorDialog(R.string.checkpoint_required);
+                        return;
                     case "not authorized to view user": // Do we handle this in profile view fragment?
-                    case "challenge_required": // Since we make users login using browser, we should not be getting this error in api requests
                     default:
                         showSnackbar(message);
                         Log.e(TAG, "checkError: " + bodyString);
