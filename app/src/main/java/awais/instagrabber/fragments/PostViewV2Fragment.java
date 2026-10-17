@@ -274,7 +274,7 @@ public class PostViewV2Fragment extends Fragment implements EditTextDialogFragme
                 outState.putInt(ARG_SLIDER_POSITION, sliderPosition);
             }
         }
-        catch (Exception _) {}
+        catch (Exception ignored) {}
     }
 
     @Override
