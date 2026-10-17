@@ -135,6 +135,8 @@ class StoryViewerFragment : Fragment() {
         releasePlayer()
         binding.imageViewer.controller = null
         _binding = null
+        // A MenuItem holds the menu, which holds the toolbar's ActionMenuView — this fragment's view.
+        menuProfile = null
     }
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
