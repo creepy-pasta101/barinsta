@@ -348,6 +348,13 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         fragmentActivity.resetToolbar(this);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // A MenuItem holds the menu, which holds the toolbar's ActionMenuView — this fragment's view.
+        storyListMenu = null;
+    }
+
     private void setupFeed() {
         binding.feedRecyclerView.setViewModelStoreOwner(this)
                                 .setLifeCycleOwner(this)
