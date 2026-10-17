@@ -31,7 +31,8 @@ class DirectMessageInboxFragment : Fragment(), OnRefreshListener {
     private val viewModel: DirectInboxViewModel by activityViewModels()
 
     private lateinit var fragmentActivity: MainActivity
-    private lateinit var binding: FragmentDirectMessagesInboxBinding
+    private var _binding: FragmentDirectMessagesInboxBinding? = null
+    private val binding get() = _binding!!
     private lateinit var lazyLoader: RecyclerLazyLoaderAtEdge
 
     private var scrollToTop = false
@@ -53,12 +54,17 @@ class DirectMessageInboxFragment : Fragment(), OnRefreshListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentDirectMessagesInboxBinding.inflate(inflater, container, false)
+        _binding = FragmentDirectMessagesInboxBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         init()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onRefresh() {
