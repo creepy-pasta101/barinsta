@@ -665,7 +665,7 @@ class StoryViewerFragment : Fragment() {
     private fun releasePlayer() {
         if (player == null) return
         try {
-            player!!.stop()
+            player!!.stop(true)
         } catch (ignored: Exception) {
         }
         try {

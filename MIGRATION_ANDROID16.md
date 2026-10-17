@@ -76,7 +76,7 @@ versions:
 | Room | 2.3.0 | 2.8.5 |
 | CameraX | 1.1.0-alpha07 | 1.3.4 |
 | WorkManager | 2.5.0 | 2.9.1 |
-| ExoPlayer | 2.14.2 | 2.19.1 |
+| ExoPlayer | 2.14.2 | 2.14.2 (held — see below) |
 | RecyclerView | 1.2.1 | 1.3.2 |
 | ConstraintLayout | 2.0.4 | 2.2.0 |
 | Guava | 27.0.1-android | 33.3.1-android |
@@ -94,6 +94,10 @@ versions:
 * `com.github.skydoves:balloon` stays at **1.3.5**. Balloon 1.4+ changed the
   `setBalloonHighlightAnimation` signature and moved overlay types; bumping it
   needs a small code migration that was out of scope for a build-fixing pass.
+* **ExoPlayer stays at 2.14.2.** 2.16 removed `CacheDataSourceFactory` and 2.19
+  removed `Player.EventListener` / `AudioListener`, all of which
+  `VideoPlayerViewHelper` and the video view holders still use. ExoPlayer 2.x is
+  end-of-life anyway; migrating to `androidx.media3` is the recommended follow-up.
 * Third-party JitPack artifacts from `ammargitham` are unchanged.
 
 ---
