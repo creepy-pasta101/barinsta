@@ -359,6 +359,11 @@ class ProfileFragment : Fragment(), OnRefreshListener, ConfirmDialogFragmentCall
         removeFollowerMenuItem = menu.findItem(R.id.remove_follower)
         shareLinkMenuItem = menu.findItem(R.id.share_link)
         shareDmMenuItem = menu.findItem(R.id.share_dm)
+        // The items are cleared in onDestroyView, so re-apply their state now that they exist again
+        // (onResume runs before this menu is rebuilt, so its call sees them as null).
+        viewModel.currentUserProfileActionLiveData.value?.let { (currentUserResource, profileResource) ->
+            setupOptionsMenuItems(currentUserResource.data, profileResource.data)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -402,6 +407,21 @@ class ProfileFragment : Fragment(), OnRefreshListener, ConfirmDialogFragmentCall
         super.onDestroyView()
         _binding = null
         setupPostsDone = false
+        // A MenuItem holds its MenuBuilder, which holds the ActionMenuView inside this fragment's own
+        // toolbar — i.e. this fragment's view. Keeping these fields across view destruction retains
+        // the whole destroyed hierarchy (LeakCanary: ProfileFragment.blockMenuItem).
+        clearOptionsMenuItems()
+    }
+
+    private fun clearOptionsMenuItems() {
+        blockMenuItem = null
+        restrictMenuItem = null
+        muteStoriesMenuItem = null
+        mutePostsMenuItem = null
+        chainingMenuItem = null
+        removeFollowerMenuItem = null
+        shareLinkMenuItem = null
+        shareDmMenuItem = null
     }
 
     private fun shareProfileViaDm() {
