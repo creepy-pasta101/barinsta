@@ -19,9 +19,12 @@ open class FeedRepository(private val repository: FeedService) {
         val form: MutableMap<String, String> = HashMap()
         form["_uuid"] = deviceUuid
         form["_csrftoken"] = csrfToken
-        form["phone_id"] = UUID.randomUUID().toString()
+        // Instagram builds a device fingerprint from these ids and expects them to stay constant for a
+        // given install. Sending a fresh random UUID on every request makes the client look like a
+        // brand-new device each time, which gets the session flagged (checkpoint_required).
+        form["phone_id"] = stableUuid(deviceUuid, "phone_id")
         form["device_id"] = deviceUuid
-        form["client_session_id"] = UUID.randomUUID().toString()
+        form["client_session_id"] = stableUuid(deviceUuid, "client_session_id")
         form["is_prefetch"] = "0"
         if (!isEmpty(cursor)) {
             form["max_id"] = cursor
@@ -31,6 +34,12 @@ open class FeedRepository(private val repository: FeedService) {
             form["reason"] = "pull_to_refresh"
         }
         return parseResponse(repository.fetchFeed(form.toMap()))
+    }
+
+    // A per-install id derived from the device UUID, so it stays constant across requests and app
+    // restarts (Instagram expects phone_id / client_session_id to be stable, not random per call).
+    private fun stableUuid(deviceUuid: String, kind: String): String {
+        return UUID.nameUUIDFromBytes("$kind:$deviceUuid".toByteArray()).toString()
     }
 
     suspend fun topicalExplore(maxId: String): TopicalExploreFeedResponse? {
