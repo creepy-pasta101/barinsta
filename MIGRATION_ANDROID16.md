@@ -14,8 +14,8 @@ still needs attention.
 
 | Setting        | Before | After |
 |----------------|--------|-------|
-| Gradle         | 7.1.1  | **8.9** |
-| Android Gradle Plugin | 4.2.2 | **8.7.3** |
+| Gradle         | 7.1.1  | **8.11.1** |
+| Android Gradle Plugin | 4.2.2 | **8.9.1** |
 | Kotlin         | 1.5.21 | **1.9.24** |
 | `compileSdk`   | 30     | **36** |
 | `targetSdk`    | 30     | **36** |
