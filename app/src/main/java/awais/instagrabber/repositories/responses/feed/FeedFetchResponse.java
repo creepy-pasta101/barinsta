@@ -2,29 +2,27 @@ package awais.instagrabber.repositories.responses.feed;
 
 import java.util.List;
 
-import awais.instagrabber.repositories.responses.Media;
-
 public class FeedFetchResponse {
-    private final List<Media> items;
+    private final List<FeedItem> feedItems;
     private final int numResults;
     private final boolean moreAvailable;
     private final String nextMaxId;
     private final String status;
 
-    public FeedFetchResponse(final List<Media> items,
+    public FeedFetchResponse(final List<FeedItem> feedItems,
                              final int numResults,
                              final boolean moreAvailable,
                              final String nextMaxId,
                              final String status) {
-        this.items = items;
+        this.feedItems = feedItems;
         this.numResults = numResults;
         this.moreAvailable = moreAvailable;
         this.nextMaxId = nextMaxId;
         this.status = status;
     }
 
-    public List<Media> getItems() {
-        return items;
+    public List<FeedItem> getFeedItems() {
+        return feedItems;
     }
 
     public int getNumResults() {
