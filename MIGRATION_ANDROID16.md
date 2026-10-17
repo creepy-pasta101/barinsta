@@ -151,6 +151,36 @@ is handled. Visual verification on a device is still recommended (see §6).
 `android:enableOnBackInvokedCallback="true"` added so the system predictive-back
 animation works.
 
+### 4.8 App-code migrations forced by the upgraded libraries
+
+Bumping the libraries required a handful of small, mechanical code migrations:
+
+* **`androidx.lifecycle.Transformations`** — since Lifecycle 2.6 this is
+  `@file:JvmName("Transformations")` wrapping top-level `LiveData` extension
+  functions, not a Java class. The Java-style `Transformations.map(x) {}` /
+  `Transformations.distinctUntilChanged(x)` calls were migrated to the extension
+  forms `x.map {}` / `x.distinctUntilChanged()` (InboxManager, ThreadManager,
+  SearchFragmentViewModel, ProfileFragmentViewModel, DirectThreadViewModel).
+* **`lifecycle-extensions` was removed** (deleted from AndroidX), so
+  `lifecycle-livedata` is now declared explicitly — that is where `LiveData`
+  helpers live.
+* **Navigation safeargs** stays on the Java generator (`androidx.navigation.safeargs`),
+  which is what the existing code was written against (synthetic properties plus
+  setters on the generated `*Directions` classes).
+* **ExoPlayer 2.19**: `DefaultHttpDataSourceFactory` → `DefaultHttpDataSource.Factory()`;
+  `Player.stop(true)` → `stop()`.
+* **commons-imaging 1.0.0-alpha6**: `JpegIptcRewriter.removeIPTC` → `removeIptc`.
+* **Navigation 2.9**: `NavController.backQueue` is no longer accessible;
+  replaced by `previousBackStackEntry != null` (the code only used the stack size
+  to test for a non-root destination).
+* **API 36 nullability**: `ContentResolver.openOutputStream` is `@NonNull`-annotated
+  on the new SDK, so the two `BitmapUtils` call sites assert non-null.
+* **Kotlin 2.x** requires exhaustive `when` over enums; missing `else` branches
+  were added (StoryViewerFragment, DownloadUtils, DirectMessagesManager).
+* **StoryViewerFragment** `onFling` override now takes the nullable `e1` the
+  framework declares; `NotificationCompat.BigPictureStyle.bigLargeIcon(null)`
+  is disambiguated with a cast.
+
 ---
 
 ## 5. CI

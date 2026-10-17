@@ -92,7 +92,7 @@ class ThreadManager(
             if (it == null) return@map Pair<List<User>, List<User>>(emptyList(), emptyList())
             val users = getUsersWithCurrentUser(it)
             val leftUsers = it.leftUsers
-            Pair(users, leftUsers)
+            Pair(users, leftUsers ?: emptyList())
         }.distinctUntilChanged()
     }
     val isPending: LiveData<Boolean> by lazy { thread.map { it?.pending ?: true }.distinctUntilChanged() }

@@ -317,7 +317,7 @@ class InboxManager(private val pending: Boolean) {
             // }
             val inbox = inboxResource.data
             val threads = inbox?.threads ?: emptyList()
-            ImmutableList.sortedCopyOf(THREAD_COMPARATOR, threads)
+            ImmutableList.sortedCopyOf(THREAD_COMPARATOR, threads) as List<DirectThread>
         }.distinctUntilChanged()
     }
 }
