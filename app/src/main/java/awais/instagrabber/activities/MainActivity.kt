@@ -224,8 +224,7 @@ class MainActivity : BaseLanguageActivity() {
         searchMenuItem = menu.findItem(R.id.search)
         val currentDestination = navController.currentDestination
         if (currentDestination != null) {
-            val backStack = navController.backQueue
-            setupMenu(backStack.size, currentDestination.id)
+            setupMenu(navController.previousBackStackEntry != null, currentDestination.id)
         }
         return true
     }
@@ -397,8 +396,7 @@ class MainActivity : BaseLanguageActivity() {
             // below is a hack to check if we are at the end of the current stack, to setup the search view
             binding.appBarLayout.setExpanded(true, true)
             val destinationId = destination.id
-            val backStack = navController.backQueue
-            setupMenu(backStack.size, destinationId)
+            setupMenu(navController.previousBackStackEntry != null, destinationId)
             val contains = showBottomViewDestinations.contains(destinationId)
             binding.root.post {
                 binding.bottomNavView.visibility = if (contains) View.VISIBLE else View.GONE
@@ -470,9 +468,9 @@ class MainActivity : BaseLanguageActivity() {
         return navTabList
     }
 
-    private fun setupMenu(backStackSize: Int, destinationId: Int) {
+    private fun setupMenu(hasBackStack: Boolean, destinationId: Int) {
         val searchMenuItem = searchMenuItem ?: return
-        if (backStackSize >= 2 && SEARCH_VISIBLE_DESTINATIONS.contains(destinationId)) {
+        if (hasBackStack && SEARCH_VISIBLE_DESTINATIONS.contains(destinationId)) {
             searchMenuItem.isVisible = true
             return
         }

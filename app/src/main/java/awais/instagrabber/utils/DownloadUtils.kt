@@ -460,6 +460,7 @@ object DownloadUtils {
                         i++
                     }
                 }
+                else -> {}
             }
             fileMap.putAll(checkFiles(context, dir, map.values.toMap(), true))
         }
@@ -490,6 +491,7 @@ object DownloadUtils {
                 }
                 return url
             }
+            else -> {}
         }
         return null
     }

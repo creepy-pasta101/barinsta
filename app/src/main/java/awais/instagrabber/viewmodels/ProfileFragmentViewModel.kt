@@ -81,7 +81,7 @@ class ProfileFragmentViewModel(
                     value = Triple(currentUser, stateUsername, action)
                 }
                 addSource(state.getLiveData<String?>("username")) { username ->
-                    this.stateUsername = Resource.success(username.substringAfter('@'))
+                    this.stateUsername = Resource.success((username ?: "").substringAfter('@'))
                     value = Triple(user, this.stateUsername, action)
                 }
                 addSource(profileAction) { action ->

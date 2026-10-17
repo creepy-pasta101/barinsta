@@ -287,6 +287,7 @@ class StoryViewerFragment : Fragment() {
                 StoryViewerOptions.Type.USER -> {
                     resetView()
                 }
+                else -> {}
             }
         }
 
@@ -298,11 +299,12 @@ class StoryViewerFragment : Fragment() {
         binding.playerView.setOnTouchListener { _, event -> gestureDetector!!.onTouchEvent(event) }
         val simpleOnGestureListener: SimpleOnGestureListener = object : SimpleOnGestureListener() {
             override fun onFling(
-                e1: MotionEvent,
+                e1: MotionEvent?,
                 e2: MotionEvent,
                 velocityX: Float,
                 velocityY: Float
             ): Boolean {
+                if (e1 == null) return false
                 val diffX = e2.x - e1.x
                 try {
                     if (Math.abs(diffX) > Math.abs(e2.y - e1.y) && Math.abs(diffX) > SwipeGestureListener.SWIPE_THRESHOLD && Math.abs(
@@ -350,6 +352,7 @@ class StoryViewerFragment : Fragment() {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
+                else -> {}
             }
         })
         if (!models.isEmpty()) {
@@ -405,6 +408,7 @@ class StoryViewerFragment : Fragment() {
                 currentStoryUsername = options!!.name
                 fetchOptions = StoryViewerOptions.forUser(options!!.id, currentStoryUsername)
             }
+            else -> {}
         }
         if (type == StoryViewerOptions.Type.STORY) {
             storiesViewModel.fetchSingleMedia(options!!.id)
@@ -661,7 +665,7 @@ class StoryViewerFragment : Fragment() {
     private fun releasePlayer() {
         if (player == null) return
         try {
-            player!!.stop(true)
+            player!!.stop()
         } catch (ignored: Exception) {
         }
         try {

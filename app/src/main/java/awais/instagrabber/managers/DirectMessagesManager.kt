@@ -129,6 +129,7 @@ object DirectMessagesManager {
                         mediaId,
                         secondId!!
                     )
+                    else -> {}
                 }
                 data.postValue(success(Any()))
                 callback?.invoke()

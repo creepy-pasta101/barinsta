@@ -153,7 +153,7 @@ class DownloadWorker(context: Context, workerParams: WorkerParameters) : Corouti
                     contentResolver.openInputStream(outFile!!.uri).use { fis ->
                         contentResolver.openOutputStream(filePath.uri).use { fos ->
                             val jpegIptcRewriter = JpegIptcRewriter()
-                            jpegIptcRewriter.removeIPTC(fis, fos)
+                            jpegIptcRewriter.removeIptc(fis, fos)
                         }
                     }
                 } catch (e: Exception) {
@@ -308,7 +308,7 @@ class DownloadWorker(context: Context, workerParams: WorkerParameters) : Corouti
                     .setStyle(
                         NotificationCompat.BigPictureStyle()
                             .bigPicture(bitmap)
-                            .bigLargeIcon(null)
+                            .bigLargeIcon(null as Bitmap?)
                     )
                     .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
             }
