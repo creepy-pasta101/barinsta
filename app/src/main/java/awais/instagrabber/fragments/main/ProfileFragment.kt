@@ -81,7 +81,8 @@ class ProfileFragment : Fragment(), OnRefreshListener, ConfirmDialogFragmentCall
     private lateinit var mainActivity: MainActivity
 
     // private lateinit var root: MotionLayout
-    private lateinit var binding: FragmentProfileBinding
+    private var _binding: FragmentProfileBinding? = null
+    private val binding get() = _binding!!
     private lateinit var appStateViewModel: AppStateViewModel
     private lateinit var viewModel: ProfileFragmentViewModel
 
@@ -163,14 +164,14 @@ class ProfileFragment : Fragment(), OnRefreshListener, ConfirmDialogFragmentCall
     }
     private val onBackPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
-            binding.postsRecyclerView.endSelection()
+            _binding?.postsRecyclerView?.endSelection()
         }
     }
     private val multiSelectAction = PrimaryActionModeCallback(
         R.menu.multi_select_download_menu,
         object : PrimaryActionModeCallback.CallbacksHelper() {
             override fun onDestroy(mode: ActionMode?) {
-                binding.postsRecyclerView.endSelection()
+                _binding?.postsRecyclerView?.endSelection()
             }
 
             override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
@@ -179,7 +180,7 @@ class ProfileFragment : Fragment(), OnRefreshListener, ConfirmDialogFragmentCall
                     val selectedMedia = this@ProfileFragment.selectedMedia ?: return false
                     val context = context ?: return false
                     DownloadUtils.download(context, selectedMedia)
-                    binding.postsRecyclerView.endSelection()
+                    _binding?.postsRecyclerView?.endSelection()
                     return true
                 }
                 return false
@@ -335,7 +336,7 @@ class ProfileFragment : Fragment(), OnRefreshListener, ConfirmDialogFragmentCall
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentProfileBinding.inflate(inflater, container, false)
+        _binding = FragmentProfileBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -399,6 +400,7 @@ class ProfileFragment : Fragment(), OnRefreshListener, ConfirmDialogFragmentCall
 
     override fun onDestroyView() {
         super.onDestroyView()
+        _binding = null
         setupPostsDone = false
     }
 
@@ -896,7 +898,7 @@ class ProfileFragment : Fragment(), OnRefreshListener, ConfirmDialogFragmentCall
             .setLayoutPreferences(layoutPreferences)
             .addFetchStatusChangeListener {
                 AppExecutors.mainThread.execute {
-                    binding.swipeRefreshLayout.isRefreshing = it
+                    _binding?.let { b -> b.swipeRefreshLayout.isRefreshing = it }
                 }
             }
             .setFeedItemCallback(feedItemCallback)
@@ -1004,7 +1006,7 @@ class ProfileFragment : Fragment(), OnRefreshListener, ConfirmDialogFragmentCall
         val fragment = PostsLayoutPreferencesDialogFragment(Constants.PREF_PROFILE_POSTS_LAYOUT) {
             layoutPreferences = it
             Handler(Looper.getMainLooper()).postDelayed(
-                { binding.postsRecyclerView.layoutPreferences = it },
+                { _binding?.let { b -> b.postsRecyclerView.layoutPreferences = it } },
                 200
             )
         }
