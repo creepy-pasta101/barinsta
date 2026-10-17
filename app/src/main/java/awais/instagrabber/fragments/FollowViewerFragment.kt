@@ -24,17 +24,16 @@ import java.util.*
 class FollowViewerFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     private var isFollowersList = false
     private var isCompare = false
-    private var shouldRefresh = true
     private var searching = false
     private var username: String? = null
     private var namePost: String? = null
     private var type = 0
-    private var root: SwipeRefreshLayout? = null
     private var adapter: FollowAdapter? = null
     private lateinit var lazyLoader: RecyclerLazyLoader
     private lateinit var fragmentActivity: AppCompatActivity
     private lateinit var viewModel: FollowViewModel
-    private lateinit var binding: FragmentFollowersViewerBinding
+    private var _binding: FragmentFollowersViewerBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,19 +47,17 @@ class FollowViewerFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        if (root != null) {
-            shouldRefresh = false
-            return root!!
-        }
-        binding = FragmentFollowersViewerBinding.inflate(layoutInflater)
-        root = binding.root
-        return root!!
+        _binding = FragmentFollowersViewerBinding.inflate(layoutInflater)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        if (!shouldRefresh) return
         init()
-        shouldRefresh = false
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun init() {
