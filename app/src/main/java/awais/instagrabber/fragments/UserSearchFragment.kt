@@ -27,7 +27,8 @@ import com.google.android.material.snackbar.Snackbar
 
 class UserSearchFragment : Fragment() {
 
-    private lateinit var binding: FragmentUserSearchBinding
+    private var _binding: FragmentUserSearchBinding? = null
+    private val binding get() = _binding!!
 
     private var resultsAdapter: UserSearchResultsAdapter? = null
     private var paddingOffset = 0
@@ -40,7 +41,7 @@ class UserSearchFragment : Fragment() {
     private val minInputWidth = Utils.convertDpToPx(50f)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentUserSearchBinding.inflate(inflater, container, false)
+        _binding = FragmentUserSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -53,6 +54,7 @@ class UserSearchFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        _binding = null
         viewModel.cleanup()
     }
 
