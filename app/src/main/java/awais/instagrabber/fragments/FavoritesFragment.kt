@@ -21,29 +21,26 @@ import awais.instagrabber.viewmodels.FavoritesViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class FavoritesFragment : Fragment() {
-    private var shouldRefresh = true
 
-    private lateinit var binding: FragmentFavoritesBinding
-    private lateinit var root: RecyclerView
+    private var _binding: FragmentFavoritesBinding? = null
+    private val binding get() = _binding!!
     private lateinit var adapter: FavoritesAdapter
 
     private val favoritesViewModel: FavoritesViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        if (this::root.isInitialized) {
-            shouldRefresh = false
-            return root
-        }
-        binding = FragmentFavoritesBinding.inflate(layoutInflater)
-        root = binding.root
+        _binding = FragmentFavoritesBinding.inflate(layoutInflater)
         binding.favoriteList.layoutManager = LinearLayoutManager(context)
-        return root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        if (!shouldRefresh) return
         init()
-        shouldRefresh = false
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onPause() {
