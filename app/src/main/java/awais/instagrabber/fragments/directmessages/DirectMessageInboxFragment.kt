@@ -65,6 +65,8 @@ class DirectMessageInboxFragment : Fragment(), OnRefreshListener {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        // A MenuItem holds the menu, which holds the toolbar's ActionMenuView — this fragment's view.
+        pendingRequestsMenuItem = null
     }
 
     override fun onRefresh() {
