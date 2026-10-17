@@ -448,6 +448,7 @@
     <string name="error">Error</string>
     <string name="account_logged_out">This account has been logged out.</string>
     <string name="login_required">Login required!</string>
+    <string name="checkpoint_required">Instagram has flagged this session and wants you to confirm the account. Open instagram.com in a browser, sign in, complete any security check it shows, then try again.</string>
     <string name="inactive_user">User is inactive!</string>
     <string name="crash_report_subject">Barinsta Crash Report</string>
     <string name="crash_report_title">Select an email app to send crash logs</string>
