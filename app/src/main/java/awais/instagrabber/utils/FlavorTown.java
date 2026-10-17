@@ -71,7 +71,17 @@ public final class FlavorTown {
     }
 
     public static void changelogCheck(@NonNull final Context context) {
+        // Rebuild the user agents on every launch. They embed the Instagram app version this client
+        // impersonates, and Instagram flags a stale one (checkpoint_required / needs_upgrade), so it
+        // must not stay frozen at whatever build first wrote it.
+        regenerateUserAgents();
         if (settingsHelper.getInteger(Constants.PREV_INSTALL_VERSION) >= BuildConfig.VERSION_CODE) return;
+        AppExecutors.INSTANCE.getDiskIO().execute(() -> CrashReporterHelper.deleteAllStacktraceFiles(context));
+        Toast.makeText(context, R.string.updated, Toast.LENGTH_SHORT).show();
+        settingsHelper.putInteger(Constants.PREV_INSTALL_VERSION, BuildConfig.VERSION_CODE);
+    }
+
+    private static void regenerateUserAgents() {
         int appUaCode = settingsHelper.getInteger(Constants.APP_UA_CODE);
         int browserUaCode = settingsHelper.getInteger(Constants.BROWSER_UA_CODE);
         if (browserUaCode == -1 || browserUaCode >= UserAgentUtils.browsers.length) {
@@ -86,8 +96,5 @@ public final class FlavorTown {
         settingsHelper.putString(Constants.APP_UA, appUa);
         final String browserUa = UserAgentUtils.generateBrowserUA(browserUaCode);
         settingsHelper.putString(Constants.BROWSER_UA, browserUa);
-        AppExecutors.INSTANCE.getDiskIO().execute(() -> CrashReporterHelper.deleteAllStacktraceFiles(context));
-        Toast.makeText(context, R.string.updated, Toast.LENGTH_SHORT).show();
-        settingsHelper.putInteger(Constants.PREV_INSTALL_VERSION, BuildConfig.VERSION_CODE);
     }
 }
