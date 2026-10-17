@@ -20,7 +20,7 @@ open class FeedRepository(private val repository: FeedService) {
         form["_uuid"] = deviceUuid
         form["_csrftoken"] = csrfToken
         form["phone_id"] = UUID.randomUUID().toString()
-        form["device_id"] = UUID.randomUUID().toString()
+        form["device_id"] = deviceUuid
         form["client_session_id"] = UUID.randomUUID().toString()
         form["is_prefetch"] = "0"
         if (!isEmpty(cursor)) {
@@ -46,20 +46,21 @@ open class FeedRepository(private val repository: FeedService) {
         var nextMaxId = feedFetchResponse.nextMaxId
         val needNewMaxId = nextMaxId == "feed_recs_head_load"
         val allPosts: MutableList<Media> = ArrayList()
-        val items = feedFetchResponse.items
-        for (media in items) {
-            if (needNewMaxId && media!!.endOfFeedDemarcator != null) {
-                val endOfFeedDemarcator = media.endOfFeedDemarcator
-                val groupSet = endOfFeedDemarcator!!.groupSet ?: continue
+        val feedItems = feedFetchResponse.feedItems ?: emptyList()
+        for (feedItem in feedItems) {
+            val media = feedItem.mediaOrAd
+            val demarcator = media?.endOfFeedDemarcator ?: feedItem.endOfFeedDemarcator
+            if (needNewMaxId && demarcator != null) {
+                val groupSet = demarcator.groupSet ?: continue
                 val groups = groupSet.groups ?: continue
                 for (group in groups) {
                     val id = group.id
                     if (id == null || id != "past_posts") continue
                     nextMaxId = group.nextMaxId
-                    val feedItems = group.feedItems
-                    for (feedItem in feedItems) {
-                        if (feedItem == null || feedItem.isInjected() || feedItem.type == null) continue
-                        allPosts.add(feedItem)
+                    val groupFeedItems = group.feedItems ?: continue
+                    for (groupFeedItem in groupFeedItems) {
+                        if (groupFeedItem == null || groupFeedItem.isInjected() || groupFeedItem.type == null) continue
+                        allPosts.add(groupFeedItem)
                     }
                 }
                 continue
