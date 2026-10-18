@@ -67,9 +67,22 @@ android {
         additionalParameters += '--no-version-vectors'
     }
 
+    signingConfigs {
+        // Fixed debug key, committed to the repo, so every debug APK — local and CI — shares one
+        // signature and installs over another. DEBUG ONLY: never sign a release with this.
+        debug {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+            storeType 'PKCS12'
+        }
+    }
+
     buildTypes {
         debug {
             minifyEnabled true
+            signingConfig signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
