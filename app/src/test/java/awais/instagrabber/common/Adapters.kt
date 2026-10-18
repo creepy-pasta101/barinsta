@@ -69,7 +69,7 @@ open class StoriesServiceAdapter : StoriesService {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getUserStories(id: Long): ReelsResponse {
+    override suspend fun getUserStories(id: Long, supportedCapabilities: String): ReelsResponse {
         TODO("Not yet implemented")
     }
 
