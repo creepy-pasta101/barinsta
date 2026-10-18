@@ -1,5 +1,6 @@
 package awais.instagrabber.repositories.responses.discover
 
+import awais.instagrabber.repositories.responses.Media
 import awais.instagrabber.repositories.responses.WrappedMedia
 
 data class TopicalExploreFeedResponse(
@@ -13,9 +14,9 @@ data class TopicalExploreFeedResponse(
     // Meta now answers with sections instead of a flat `items` array; both are accepted.
     val sectionalItems: List<SectionalItem>? = null
 ) {
-    /** Media wrappers from whichever shape the endpoint returned. */
-    val feedItems: List<WrappedMedia>
-        get() = items
-            ?: sectionalItems?.flatMap { it.layoutContent?.mediaWrappers() ?: emptyList() }
+    /** Posts from whichever shape the endpoint returned (flat `items`, or flattened sections). */
+    val feedItems: List<Media>
+        get() = items?.mapNotNull { it.media }
+            ?: sectionalItems?.flatMap { it.layoutContent?.media() ?: emptyList() }
             ?: emptyList()
 }
