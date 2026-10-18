@@ -29,7 +29,11 @@ interface StoriesService {
     suspend fun getStories(@Path("type") type: String, @Path("id") id: String): ReelsResponse
 
     @GET("/api/v1/feed/user/{id}/story/")
-    suspend fun getUserStories(@Path("id") id: Long): ReelsResponse
+    suspend fun getUserStories(
+        @Path("id") id: Long,
+        // Instagram returns a thin/empty `reel` without this.
+        @Query("supported_capabilities_new") supportedCapabilities: String,
+    ): ReelsResponse
 
     @FormUrlEncoded
     @POST("/api/v1/media/{storyId}/{stickerId}/{action}/")
