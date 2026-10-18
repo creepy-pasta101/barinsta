@@ -181,10 +181,12 @@ open class GraphQLRepository(private val service: GraphQLService) {
     ): User? {
         // The web page's window._sharedData bootstrap is gone; the web profile API returns the
         // same GraphQL user object, one level deeper, under data.user.
+        // The app id and user agent are validated as a pair, and the desktop id is login-walled
+        // logged-out now; the Android web app id + in-app WebView user agent still answers.
         val response = service.getWebProfileInfo(
             username,
-            "936619743392459",
-            Utils.settingsHelper.getString(Constants.BROWSER_UA)
+            "3419628305025917",
+            "Mozilla/5.0 (Linux; Android 14; SM-S921B Build/UP1A.231005.007; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/131.0.0.0 Mobile Safari/537.36 Instagram 340.0.0.36.90 Android (34/14; 480dpi; 1080x2340; samsung; SM-S921B; e1s; s5e9945; en_US; 629151101)"
         )
         try {
             val userJson = JSONObject(response)
