@@ -11,6 +11,14 @@ import awais.instagrabber.utils.Utils
 import awais.instagrabber.webservices.RetrofitFactory.retrofit
 import java.util.UUID
 
+// Instagram returns a thin/empty `reel` for feed/user/{id}/story/ unless the client advertises the
+// capabilities it supports; this mirrors what the current clients send.
+private const val SUPPORTED_CAPABILITIES =
+    "[{\"value\":\"119.0,120.0,121.0,122.0,123.0,124.0,125.0,126.0,127.0,128.0,129.0,130.0,131.0,132.0,133.0,134.0,135.0,136.0,137.0,138.0,139.0,140.0,141.0,142.0\",\"name\":\"SUPPORTED_SDK_VERSIONS\"}," +
+        "{\"value\":\"14\",\"name\":\"FACE_TRACKER_VERSION\"}," +
+        "{\"value\":\"ETC2_COMPRESSION\",\"name\":\"COMPRESSION\"}," +
+        "{\"value\":\"gyroscope_enabled\",\"name\":\"gyroscope\"}]"
+
 open class StoriesRepository(private val service: StoriesService) {
 
     suspend fun fetch(mediaId: Long): StoryMedia? {
@@ -83,7 +91,7 @@ open class StoriesRepository(private val service: StoriesService) {
                 response.reels?.get(options.name)
             }
             StoryViewerOptions.Type.USER -> {
-                val response = service.getUserStories(options.id)
+                val response = service.getUserStories(options.id, SUPPORTED_CAPABILITIES)
                 response.reel
             }
             // should not reach beyond this point
