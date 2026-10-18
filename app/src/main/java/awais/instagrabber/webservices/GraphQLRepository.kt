@@ -5,6 +5,7 @@ import awais.instagrabber.repositories.GraphQLService
 import awais.instagrabber.repositories.responses.*
 import awais.instagrabber.utils.Constants
 import awais.instagrabber.utils.ResponseBodyUtils
+import awais.instagrabber.utils.Utils
 import awais.instagrabber.utils.extensions.TAG
 import org.json.JSONException
 import org.json.JSONObject
@@ -178,19 +179,16 @@ open class GraphQLRepository(private val service: GraphQLService) {
     open suspend fun fetchUser(
         username: String,
     ): User? {
-        val response = service.getUser(username)
+        // The web page's window._sharedData bootstrap is gone; the web profile API returns the
+        // same GraphQL user object, one level deeper, under data.user.
+        val response = service.getWebProfileInfo(
+            username,
+            "936619743392459",
+            Utils.settingsHelper.getString(Constants.BROWSER_UA)
+        )
         try {
-            val body = JSONObject(
-                response
-                    .split("<script type=\"text/javascript\">window._sharedData = ").get(1)
-                    .split("</script>").get(0)
-                    .trim().replace(Regex("\\};$"), "}")
-            )
-            val userJson = body
-                .getJSONObject("entry_data")
-                .getJSONArray("ProfilePage")
-                .getJSONObject(0)
-                .getJSONObject("graphql")
+            val userJson = JSONObject(response)
+                .getJSONObject("data")
                 .getJSONObject(Constants.EXTRAS_USER)
             val isPrivate = userJson.getBoolean("is_private")
             val id = userJson.optLong(Constants.EXTRAS_ID, 0)
