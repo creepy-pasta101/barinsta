@@ -39,16 +39,7 @@ public class DiscoverPostFetchService implements PostFetcher.PostFetchService {
             }
             moreAvailable = result.getMoreAvailable();
             maxId = result.getNextMaxId();
-            final List<WrappedMedia> items = result.getItems();
-            final List<Media> posts;
-            if (items == null) {
-                posts = Collections.emptyList();
-            } else {
-                posts = items.stream()
-                             .map(WrappedMedia::getMedia)
-                             .filter(Objects::nonNull)
-                             .collect(Collectors.toList());
-            }
+            final List<Media> posts = result.getFeedItems();
             if (fetchListener != null) {
                 fetchListener.onResult(posts);
             }

@@ -3,6 +3,7 @@ package awais.instagrabber.webservices
 import awais.instagrabber.BuildConfig
 import awais.instagrabber.repositories.responses.Caption
 import awais.instagrabber.repositories.serializers.CaptionDeserializer
+import awais.instagrabber.repositories.serializers.LenientTypeAdapterFactory
 import awais.instagrabber.utils.Utils
 import awais.instagrabber.webservices.interceptors.AddCookiesInterceptor
 import awais.instagrabber.webservices.interceptors.IgErrorsInterceptor
@@ -35,6 +36,8 @@ object RetrofitFactory {
         val gson = GsonBuilder().apply {
             setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             registerTypeAdapter(Caption::class.java, CaptionDeserializer())
+            // Meta sends the same field as number/string/boolean across endpoints and versions.
+            registerTypeAdapterFactory(LenientTypeAdapterFactory())
             setLenient()
         }.create()
         Retrofit.Builder().apply {
