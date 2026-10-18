@@ -5,6 +5,7 @@ import awais.instagrabber.repositories.GraphQLService
 import awais.instagrabber.repositories.responses.*
 import awais.instagrabber.utils.Constants
 import awais.instagrabber.utils.ResponseBodyUtils
+import awais.instagrabber.utils.Utils
 import awais.instagrabber.utils.extensions.TAG
 import org.json.JSONException
 import org.json.JSONObject
@@ -178,19 +179,18 @@ open class GraphQLRepository(private val service: GraphQLService) {
     open suspend fun fetchUser(
         username: String,
     ): User? {
-        val response = service.getUser(username)
+        // The web page's window._sharedData bootstrap is gone; the web profile API returns the
+        // same GraphQL user object, one level deeper, under data.user.
+        // The app id and user agent are validated as a pair, and the desktop id is login-walled
+        // logged-out now; the Android web app id + in-app WebView user agent still answers.
+        val response = service.getWebProfileInfo(
+            username,
+            "3419628305025917",
+            "Mozilla/5.0 (Linux; Android 14; SM-S921B Build/UP1A.231005.007; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/131.0.0.0 Mobile Safari/537.36 Instagram 340.0.0.36.90 Android (34/14; 480dpi; 1080x2340; samsung; SM-S921B; e1s; s5e9945; en_US; 629151101)"
+        )
         try {
-            val body = JSONObject(
-                response
-                    .split("<script type=\"text/javascript\">window._sharedData = ").get(1)
-                    .split("</script>").get(0)
-                    .trim().replace(Regex("\\};$"), "}")
-            )
-            val userJson = body
-                .getJSONObject("entry_data")
-                .getJSONArray("ProfilePage")
-                .getJSONObject(0)
-                .getJSONObject("graphql")
+            val userJson = JSONObject(response)
+                .getJSONObject("data")
                 .getJSONObject(Constants.EXTRAS_USER)
             val isPrivate = userJson.getBoolean("is_private")
             val id = userJson.optLong(Constants.EXTRAS_ID, 0)

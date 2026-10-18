@@ -125,6 +125,10 @@ open class GraphQLServiceAdapter : GraphQLService {
         TODO("Not yet implemented")
     }
 
+    override suspend fun getWebProfileInfo(username: String, appId: String, userAgent: String): String {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getPost(shortcode: String): String {
         TODO("Not yet implemented")
     }

@@ -23,6 +23,12 @@ public class AddCookiesInterceptor implements Interceptor {
         if (hasCookie) {
             builder.addHeader("Cookie", cookie);
         }
+        // Instagram correlates the session with the app id; without it the mobile endpoints answer
+        // checkpoint_required. The web profile call sets its own app id, so skip it here.
+        if (request.url().host().contains("i.instagram.com")
+                && !request.url().encodedPath().contains("/api/v1/users/web_profile_info")) {
+            builder.header("X-IG-App-ID", "567067343352427");
+        }
         final String userAgentHeader = "User-Agent";
         if (request.header(userAgentHeader) == null) {
             builder.addHeader(userAgentHeader, Utils.settingsHelper.getString(hasCookie ? Constants.APP_UA : Constants.BROWSER_UA));

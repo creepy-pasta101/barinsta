@@ -1,7 +1,9 @@
 package awais.instagrabber.repositories
 
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Path
+import retrofit2.http.Query
 import retrofit2.http.QueryMap
 
 interface GraphQLService {
@@ -10,6 +12,14 @@ interface GraphQLService {
 
     @GET("/{username}/")
     suspend fun getUser(@Path("username") username: String): String
+
+    // Current profile endpoint (the mobile usernameinfo/info paths now error for most accounts).
+    @GET("/api/v1/users/web_profile_info/")
+    suspend fun getWebProfileInfo(
+        @Query("username") username: String,
+        @Header("X-IG-App-ID") appId: String,
+        @Header("User-Agent") userAgent: String,
+    ): String
 
     @GET("/p/{shortcode}/?__a=1")
     suspend fun getPost(@Path("shortcode") shortcode: String): String
