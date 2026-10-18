@@ -1,11 +1,11 @@
 package awais.instagrabber.repositories.serializers
 
 import com.google.gson.Gson
-import com.google.gson.JsonToken
 import com.google.gson.TypeAdapter
 import com.google.gson.TypeAdapterFactory
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
+import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
 
 /**
@@ -32,10 +32,7 @@ class LenientTypeAdapterFactory : TypeAdapterFactory {
             @Suppress("UNCHECKED_CAST")
             override fun read(reader: JsonReader): T {
                 val token = reader.peek()
-                if (token == JsonToken.NULL) {
-                    reader.nextNull()
-                    return if (string) null as T else false as T
-                }
+                if (token == JsonToken.NULL) return delegate.read(reader)
                 when {
                     numeric && token == JsonToken.STRING -> {
                         val s = reader.nextString().trim()
