@@ -224,14 +224,22 @@ class ProfileFragmentViewModel(
         stateUsername: String,
     ): User? {
         if (currentUser != null) {
-            // logged in
-            val tempUser = userRepository.getUsernameInfo(stateUsername)
-            if (!tempUser.isReallyPrivate(currentUser)) {
-                tempUser.friendshipStatus = userRepository.getUserFriendship(tempUser.pk)
+            // logged in: the mobile profile endpoints now error for many accounts, so fall through
+            // to the web profile API instead of failing outright
+            val tempUser = try {
+                userRepository.getUsernameInfo(stateUsername)
+            } catch (e: Exception) {
+                Log.e(TAG, "getUsernameInfo failed, falling back to web profile info", e)
+                null
             }
-            return tempUser
+            if (tempUser != null) {
+                if (!tempUser.isReallyPrivate(currentUser)) {
+                    tempUser.friendshipStatus = userRepository.getUserFriendship(tempUser.pk)
+                }
+                return tempUser
+            }
         }
-        // anonymous
+        // anonymous, or the mobile endpoint failed
         return graphQLRepository.fetchUser(stateUsername)
     }
 
